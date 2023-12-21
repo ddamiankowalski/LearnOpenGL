@@ -2,6 +2,8 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
+#include <fstream>
+#include <string>
 
 void windowResizeCallback(GLFWwindow* window, int width, int height)
 {
@@ -28,6 +30,41 @@ GLFWwindow* CreateWindow()
     return window;
 }
 
+void BindBuffer(float *vert, unsigned int vertSize)
+{
+    unsigned int vbo;
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, vertSize, vert, GL_STATIC_DRAW);
+}
+
+void ReadShaderSource(std::string filePath)
+{
+    std::fstream newfile;
+    newfile.open(filePath);
+
+    if(!newfile.is_open())
+    {
+        std::cout << "Error while reading shader source for" << filePath << std::endl;
+        return;
+    }
+
+    std::string readString;
+
+    while(std::getline(newfile, readString))
+    {
+        std::cout << readString << std::endl;
+    }
+
+    newfile.close();  
+}
+
+float vertices[] = {
+     0.0f,  0.5f, 0.0f,
+     0.5f,  0.5f, 0.0f,
+    -0.5f, -0.5f, 0.0f
+};
+
 int main()
 {
     InitializeGlfw();
@@ -50,11 +87,18 @@ int main()
     glViewport(0, 0, 800, 600);
     glfwSetFramebufferSizeCallback(window, windowResizeCallback);
 
+    BindBuffer(vertices, sizeof(vertices));
+
+    ReadShaderSource("res/shaders/fragment.shader");
+
     while(!glfwWindowShouldClose(window))
     {
-        glfwSwapBuffers(window);
+        glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
 
         processInput(window);
+
+        glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
