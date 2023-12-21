@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <sstream>
 
 void windowResizeCallback(GLFWwindow* window, int width, int height)
 {
@@ -38,25 +39,15 @@ void BindBuffer(float *vert, unsigned int vertSize)
     glBufferData(GL_ARRAY_BUFFER, vertSize, vert, GL_STATIC_DRAW);
 }
 
-void ReadShaderSource(std::string filePath)
+std::string ReadShaderSource(std::string filePath)
 {
-    std::fstream newfile;
-    newfile.open(filePath);
+    std::ifstream file(filePath);
+    std::string contents((std::istreambuf_iterator<char>(file)), 
+    std::istreambuf_iterator<char>());
 
-    if(!newfile.is_open())
-    {
-        std::cout << "Error while reading shader source for" << filePath << std::endl;
-        return;
-    }
+    std::cout << contents.c_str() << std::endl;
 
-    std::string readString;
-
-    while(std::getline(newfile, readString))
-    {
-        std::cout << readString << std::endl;
-    }
-
-    newfile.close();  
+    return contents;
 }
 
 float vertices[] = {
@@ -89,7 +80,8 @@ int main()
 
     BindBuffer(vertices, sizeof(vertices));
 
-    ReadShaderSource("res/shaders/fragment.shader");
+    std::string fragmentShaderSource = ReadShaderSource("res/shaders/fragment.shader");
+    std::string vertexShaderSource = ReadShaderSource("res/shaders/vertex.shader");
 
     while(!glfwWindowShouldClose(window))
     {
