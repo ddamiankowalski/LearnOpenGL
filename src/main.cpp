@@ -8,6 +8,12 @@ void windowResizeCallback(GLFWwindow* window, int width, int height)
     glViewport(0, 0, width, height);
 }
 
+void processInput(GLFWwindow* window)
+{
+    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+}
+
 void static InitializeGlfw()
 {
     glfwInit();
@@ -33,6 +39,8 @@ int main()
         glfwTerminate();
     }
 
+    glfwMakeContextCurrent(window);
+
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
         std::cout << "Failed to initialize GLAD" << std::endl;
@@ -45,6 +53,8 @@ int main()
     while(!glfwWindowShouldClose(window))
     {
         glfwSwapBuffers(window);
+
+        processInput(window);
         glfwPollEvents();
     }
 
