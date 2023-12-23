@@ -1,16 +1,18 @@
 #include "glad.h"
+#include "shader.h"
+
 #include <GLFW/glfw3.h>
 
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <tgmath.h>
 
 float vertices[] = {
-    -0.5f, -0.5f, 0.0f, // bottom left
-     0.5f, -0.5f, 0.0f, // bottom right
-     0.5f,  0.5f, 0.0f, // top right
-    -0.5f,  0.5f, 0.0f, // top left
+    -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+    0.0f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
+    0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f
 };
 
 unsigned int indices[] = {
@@ -85,22 +87,24 @@ int main()
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
 
-    unsigned int ebo;
-    glGenBuffers(1, &ebo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    // unsigned int ebo;
+    // glGenBuffers(1, &ebo);
+    // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    // glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     BindBuffer(vertices, sizeof(vertices));
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
-    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)0);
+    glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
 
     std::string fragmentShaderSource = ReadShaderSource("res/shaders/fragment.shader");
     std::string vertexShaderSource = ReadShaderSource("res/shaders/vertex.shader");
 
-    unsigned int program, vertexShader, fragmentShader;
+    unsigned int program, vertexShader, fragmentShader, greenShader;
     vertexShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShader, 1, (const GLchar *const *) &vertexShaderSource, NULL);
     glCompileShader(vertexShader);
@@ -117,17 +121,25 @@ int main()
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
+    Shader triangleShader("res/shaders/vertex.shader", "res/shaders/fragment.shader");
+    triangleShader.use();
+
     while(!glfwWindowShouldClose(window))
     {
         glClear(GL_COLOR_BUFFER_BIT);
 
         processInput(window);
-        
-        glUseProgram(program);
-        glBindVertexArray(vao);
 
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        // setting data to uniform
+        // float timeValue = glfwGetTime();
+        // float greenValue = std::sin(timeValue) / 2.0f + 0.5f;
+        // float blueValue = std::cos(timeValue) / 2.0f + 0.5f;
+        // int vertexColorLocation = glGetUniformLocation(program, "outColor");
+
+        triangleShader.use();
+
+        glBindVertexArray(vao);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
 
         glfwSwapBuffers(window);
         glfwPollEvents();

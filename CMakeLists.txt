@@ -6,9 +6,10 @@ find_package(OpenGL REQUIRED)
 
 add_executable(
     opengl_practice 
-    src/main.cpp 
+    src/main.cpp
     src/glad.c 
     src/glad.h
+    src/shader.h
 )
 
 target_link_libraries(opengl_practice glfw)
