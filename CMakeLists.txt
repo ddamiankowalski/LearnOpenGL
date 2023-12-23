@@ -10,6 +10,7 @@ add_executable(
     src/glad.c 
     src/glad.h
     src/shader.h
+    src/stb_image.h
 )
 
 target_link_libraries(opengl_practice glfw)

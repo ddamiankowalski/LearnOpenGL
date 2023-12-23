@@ -41,6 +41,11 @@ class Shader
             glUseProgram(ID);
         }
 
+        void setFloat(const std::string &name, float value)
+        {
+            glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
+        }
+
     private:
         std::string readShaderSource(std::string filePath)
         {
