@@ -171,24 +171,10 @@ int main()
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
 
-    int width2, height2, nrChannels2;
-    unsigned char *data2 = stbi_load("res/textures/texture2.jpg", &width2, &height2, &nrChannels2, 0);
-
-    unsigned int texture2;
-    glGenTextures(1, &texture2);
-    glBindTexture(GL_TEXTURE_2D, texture2);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width2, height2, 0, GL_RGB, GL_UNSIGNED_BYTE, data2);
-    glGenerateMipmap(GL_TEXTURE_2D);
-
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture);
 
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, texture2);
-
     stbi_image_free(data);
-    stbi_image_free(data2);
         
     triangleShader.use();
     glUniform1i(glGetUniformLocation(triangleShader.ID, "ourTexture"), 0);
@@ -207,6 +193,8 @@ int main()
     {
         glClear(GL_COLOR_BUFFER_BIT);
 
+        glm::mat4 model = glm::mat4(1.0f); 
+        model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.5f, 1.0f, 0.0f));
         int modelLoc = glGetUniformLocation(triangleShader.ID, "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
