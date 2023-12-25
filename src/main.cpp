@@ -1,5 +1,6 @@
 #include "glad.h"
 #include "shader.h"
+#include "camera.h"
 
 #include <GLFW/glfw3.h>
 
@@ -15,6 +16,8 @@
 #include <string>
 #include <sstream>
 #include <tgmath.h>
+
+float lastX = 400, lastY = 300;
 
    float vertices3D[] = {
         -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
@@ -60,26 +63,43 @@
         -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
     };
 
-glm::vec3 cubePositions[] = {
-    glm::vec3( 0.0f, 0.0f, 0.0f),
-    glm::vec3( 2.0f, 5.0f, -15.0f),
-    glm::vec3( -1.0f, -5.0f, -2.5f),
-};
-
 unsigned int indices[] = {
     0, 2, 3,
     0, 2, 1
 };
+
+Camera cam(glm::vec3(0.0f, 0.0f, 10.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, 0.0f);
 
 void windowResizeCallback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
 }
 
+void mouseMoveCallback(GLFWwindow* window, double xPos, double yPos)
+{
+    float xoffset = xPos - lastX;
+    float yoffset = lastY - yPos;
+
+    lastX = xPos;
+    lastY = yPos;
+}
+
 void processInput(GLFWwindow* window)
 {
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+
+    if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        cam.ProcessKeyboard(Camera_Movement::FORWARD);
+
+    if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        cam.ProcessKeyboard(Camera_Movement::BACKWARD);
+
+    if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        cam.ProcessKeyboard(Camera_Movement::RIGHT);
+
+    if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        cam.ProcessKeyboard(Camera_Movement::LEFT);
 }
 
 void static InitializeGlfw()
@@ -117,6 +137,8 @@ int main()
 
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, windowResizeCallback);
+    glfwSetCursorPosCallback(window, mouseMoveCallback);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
@@ -142,12 +164,6 @@ int main()
 
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
-
-    // glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float)));
-    // glEnableVertexAttribArray(1);
-
-    // glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float)));
-    // glEnableVertexAttribArray(2);
 
     Shader triangleShader("res/shaders/vertex.shader", "res/shaders/fragment.shader");
 
@@ -177,13 +193,8 @@ int main()
     triangleShader.use();
     glUniform1i(glGetUniformLocation(triangleShader.ID, "ourTexture"), 0);
     glUniform1i(glGetUniformLocation(triangleShader.ID, "ourTexture2"), 1);
-
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.0f, 0.0f, 0.0f));
     
     glm::mat4 view = glm::mat4(1.0f);
-    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-
     glm::mat4 projection;
     projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
@@ -193,30 +204,31 @@ int main()
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        view = glm::rotate(view, glm::radians((float)glfwGetTime() / 10), glm::vec3(1.0f, 0.0f, 0.0f));
-
-        int viewLoc = glGetUniformLocation(triangleShader.ID, "view");
-        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-
         int projectionLoc = glGetUniformLocation(triangleShader.ID, "projection");
         glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
         processInput(window);
+
+        const float radius = 10.0f;
+        float camX = sin(glfwGetTime()) * radius;
+        float camZ = cos(glfwGetTime()) * radius;
+        float camY = cos(glfwGetTime()) * 2.5f;
+
+        glm::mat4 view;
+        //view = glm::lookAt(glm::vec3(camX, camY, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
+        
+        view = glm::lookAt(cam.Position, glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
+        int viewLoc = glGetUniformLocation(triangleShader.ID, "view");
+        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+
         triangleShader.use();
         glBindVertexArray(vao);
-        
-        for(unsigned int i = 0; i < 3; i++)
-        {
-            glm::mat4 model = glm::mat4(1.0f); 
-            model = glm::translate(model, cubePositions[i]);
-            float angle = 20.0f;
-            model = glm::rotate(model, glm::radians((float)glfwGetTime() * 100), glm::vec3(1.0f, 0.0f, 0.0f));
 
-            int modelLoc = glGetUniformLocation(triangleShader.ID, "model");
-            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-            glDrawArrays(GL_TRIANGLES, 0, 36);
-
-        }
+        glm::mat4 model = glm::mat4(1.0f); 
+        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+        int modelLoc = glGetUniformLocation(triangleShader.ID, "model");
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
 
         glfwSwapBuffers(window);
         glfwPollEvents();

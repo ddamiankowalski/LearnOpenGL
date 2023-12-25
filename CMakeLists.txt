@@ -10,6 +10,7 @@ add_executable(
     src/glad.c 
     src/glad.h
     src/shader.h
+    src/camera.h
     src/stb_image.h
 )
 
