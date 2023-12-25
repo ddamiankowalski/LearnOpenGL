@@ -3,6 +3,10 @@
 
 #include "glad.h"
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -44,6 +48,13 @@ class Shader
         void setFloat(const std::string &name, float value)
         {
             glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
+        }
+
+        void setMat4(const GLchar* name, glm::mat4 matrix)
+        {
+            unsigned int location;
+            location = glGetUniformLocation(ID, name);
+            glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
         }
 
     private:

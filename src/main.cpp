@@ -17,9 +17,7 @@
 #include <sstream>
 #include <tgmath.h>
 
-float lastX = 400, lastY = 300;
-
-   float vertices3D[] = {
+float vertices3D[] = {
         -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
          0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
          0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
@@ -61,7 +59,7 @@ float lastX = 400, lastY = 300;
          0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
         -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
         -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-    };
+};
 
 unsigned int indices[] = {
     0, 2, 3,
@@ -73,15 +71,6 @@ Camera cam(glm::vec3(0.0f, 0.0f, 10.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, 0.0f
 void windowResizeCallback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
-}
-
-void mouseMoveCallback(GLFWwindow* window, double xPos, double yPos)
-{
-    float xoffset = xPos - lastX;
-    float yoffset = lastY - yPos;
-
-    lastX = xPos;
-    lastY = yPos;
 }
 
 void processInput(GLFWwindow* window)
@@ -137,8 +126,6 @@ int main()
 
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, windowResizeCallback);
-    glfwSetCursorPosCallback(window, mouseMoveCallback);
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
@@ -148,14 +135,12 @@ int main()
 
     glViewport(0, 0, 800, 800);
 
+    Shader triangleShader("res/shaders/vertex.shader", "res/shaders/fragment.shader");
+    Shader lighSourceShader("res/shaders/lightvertex.shader", "res/shaders/lightfragment.shader");
+
     unsigned int vao;
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
-
-    unsigned int ebo;
-    glGenBuffers(1, &ebo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     BindBuffer(vertices3D, sizeof(vertices3D));
 
@@ -164,8 +149,6 @@ int main()
 
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
-
-    Shader triangleShader("res/shaders/vertex.shader", "res/shaders/fragment.shader");
 
     // TEXTURES    
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -189,10 +172,6 @@ int main()
     glBindTexture(GL_TEXTURE_2D, texture);
 
     stbi_image_free(data);
-        
-    triangleShader.use();
-    glUniform1i(glGetUniformLocation(triangleShader.ID, "ourTexture"), 0);
-    glUniform1i(glGetUniformLocation(triangleShader.ID, "ourTexture2"), 1);
     
     glm::mat4 view = glm::mat4(1.0f);
     glm::mat4 projection;
@@ -204,28 +183,33 @@ int main()
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        int projectionLoc = glGetUniformLocation(triangleShader.ID, "projection");
-        glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
-
         processInput(window);
 
-        const float radius = 10.0f;
-        float camX = sin(glfwGetTime()) * radius;
-        float camZ = cos(glfwGetTime()) * radius;
-        float camY = cos(glfwGetTime()) * 2.5f;
+        triangleShader.use();
+        glUniform1i(glGetUniformLocation(triangleShader.ID, "ourTexture"), 0);
 
         glm::mat4 view;        
         view = glm::lookAt(cam.Position, glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
-        int viewLoc = glGetUniformLocation(triangleShader.ID, "view");
-        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-
-        triangleShader.use();
-        glBindVertexArray(vao);
 
         glm::mat4 model = glm::mat4(1.0f); 
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-        int modelLoc = glGetUniformLocation(triangleShader.ID, "model");
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+        triangleShader.setMat4("view", view);
+        triangleShader.setMat4("projection", projection);
+        triangleShader.setMat4("model", model);
+
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        lighSourceShader.use();
+
+        glm::mat4 model2 = glm::mat4(1.0f); 
+        model2 = glm::translate(model2, glm::vec3(2.0f, 0.0f, 0.0f));
+        model2 = glm::scale(model2, glm::vec3(0.125, 0.125, 0.125));
+
+        lighSourceShader.setMat4("view", view);
+        lighSourceShader.setMat4("projection", projection);
+        lighSourceShader.setMat4("model", model2);
+
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
         glfwSwapBuffers(window);
