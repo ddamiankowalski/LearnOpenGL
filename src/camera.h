@@ -50,21 +50,18 @@ class Camera
         {
             float velocity = MOVEMENT_SPEED;
 
-            if (direction == FORWARD)
-            {
-                PitchAngle += ROTATE_SPEED;
-            }
-            if (direction == BACKWARD)
-            {
-                PitchAngle -= ROTATE_SPEED;
-            }
-            if (direction == LEFT)
-            {
-                YawAngle -= ROTATE_SPEED;
-            }
-            if (direction == RIGHT)
-            {
-                YawAngle += ROTATE_SPEED;
+            switch(direction) {
+                case FORWARD:
+                    PitchAngle += ROTATE_SPEED;
+                    break;
+                case BACKWARD:
+                    PitchAngle -= ROTATE_SPEED;
+                    break;
+                case LEFT:
+                    PitchAngle -= ROTATE_SPEED;
+                    break;
+                case RIGHT:
+                    PitchAngle += ROTATE_SPEED;
             }
 
             float x = Radius * cos(YawAngle) * cos(PitchAngle);
