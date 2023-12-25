@@ -214,9 +214,7 @@ int main()
         float camZ = cos(glfwGetTime()) * radius;
         float camY = cos(glfwGetTime()) * 2.5f;
 
-        glm::mat4 view;
-        //view = glm::lookAt(glm::vec3(camX, camY, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
-        
+        glm::mat4 view;        
         view = glm::lookAt(cam.Position, glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
         int viewLoc = glGetUniformLocation(triangleShader.ID, "view");
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
