@@ -180,7 +180,7 @@ private:
         float delta = 1.0f / (vertSideNum - 1);
 
         for(int i = 0; i < vertSideNum; i++)
-            xTexPosition.push_back(0.0f + delta * i);
+            xTexPosition.push_back(1.0f - delta * i);
         
         for(int i = 0; i < vertSideNum; i++)
             yTexPosition.push_back(0.0f + delta * i);
