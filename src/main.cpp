@@ -2,6 +2,7 @@
 #include "shader.h"
 #include "camera.h"
 #include "vertexarray.h"
+#include "geodata.h"
 
 #include <GLFW/glfw3.h>
 
@@ -173,6 +174,9 @@ int main()
 
     glViewport(0, 0, 800, 800);
 
+    GeoData geoData;
+    geoData.readElevation("res/loc.txt");
+
     Shader triangleShader("res/shaders/vertex.shader", "res/shaders/fragment.shader");
     Shader lightSourceShader("res/shaders/lightvertex.shader", "res/shaders/lightfragment.shader");
 
@@ -207,7 +211,7 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     int width, height, nrChannels;
-    unsigned char *data = stbi_load("res/textures/texture2.jpg", &width, &height, &nrChannels, 0);
+    unsigned char *data = stbi_load("res/textures/texture3.jpg", &width, &height, &nrChannels, 0);
 
     unsigned int texture;
     glGenTextures(1, &texture);

@@ -11,6 +11,7 @@ add_executable(
     src/glad.h
     src/shader.h
     src/camera.h
+    src/geodata.h
     src/vertexarray.h
     src/stb_image.h
 )
