@@ -63,6 +63,15 @@ float lightVertices3D[] = {
         -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 };
 
+float newVertices3D[] = {
+    -5.5f,  0.0f, -5.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+     5.5f,  0.0f, -5.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+    -5.5f,  0.0f,  5.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+    -5.5f,  0.0f,  5.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+     5.5f,  0.0f, -5.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+     5.5f,  0.0f,  5.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f
+};
+
 float vertices3D[] = {
         // WALL 1
         -5.5f,  0.0f, -5.5f, 0.0f, 1.0f,  0.0f, 0.0f, 0.0f,
@@ -188,7 +197,7 @@ int main()
 
     VertexArray box;
     box.bind();
-    box.createVBO(vertices3D, sizeof(vertices3D));
+    box.createVBO(newVertices3D, sizeof(newVertices3D));
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
@@ -254,7 +263,7 @@ int main()
         triangleShader.setVec3("lightPos", glm::vec3(cos(glfwGetTime()) * 10, sin(glfwGetTime()) * 5, 0.0f));
         triangleShader.setVec3("viewPos", cam.Position);
 
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
         
         glBindVertexArray(light.ID);
         lightSourceShader.use();

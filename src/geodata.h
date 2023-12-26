@@ -13,13 +13,9 @@ public:
 
         if(file.is_open())
         {
-            std::string el;
-            unsigned int a = 0;
-            
+            std::string el;            
             while(std::getline(file, el))
-            {   
                 elevations.push_back(std::stoi(el));
-            }
         }
     }
 
