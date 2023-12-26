@@ -57,6 +57,13 @@ class Shader
             glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
         }
 
+        void setVec3(const GLchar* name, glm::vec3 vector)
+        {
+            unsigned int location;
+            location = glGetUniformLocation(ID, name);
+            glUniform3fv(location, 1, glm::value_ptr(vector));
+        }
+
     private:
         std::string readShaderSource(std::string filePath)
         {
