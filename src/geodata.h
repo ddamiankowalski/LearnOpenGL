@@ -11,14 +11,12 @@ public:
     
     std::vector<float> xPositions;
     std::vector<float> zPositions;
+
     std::vector<float> positions3D;
+    std::vector<unsigned int> indices3D;
 
-    float* vecArr3D()
+    GeoData(const std::string& filePath)
     {
-        return positions3D.data();
-    }
-
-    void readElevation(const std::string& filePath) {
         std::fstream file;
         file.open(filePath, std::ios::in);
 
@@ -29,14 +27,63 @@ public:
                 elevations.push_back(std::stoi(el));
         }
 
+        createIndicesVector();
         createXVector();
         createZVector();
-        
         create3DVector();
+    }
+
+    float* vecArr3D()
+    {
+        float* newVertices3D = new float[positions3D.size()];
+        std::copy(positions3D.begin(), positions3D.end(), newVertices3D);
+        
+        return newVertices3D;
+    }
+
+    void fillVecArr3D(float* verticesArray) 
+    {
+        std::copy(positions3D.begin(), positions3D.end(), verticesArray);
+    }
+
+    unsigned int sizeOfVecArr3D()
+    {
+        return positions3D.size() * sizeof(float);
+    }
+
+    void fillDataIndices(unsigned int* indicesArray)
+    {
+        std::copy(indices3D.begin(), indices3D.end(), indicesArray);
+    }
+
+    unsigned int sizeOfIndices3D()
+    {
+        return indices3D.size() * sizeof(unsigned int);
     }
 
 private:
     std::vector<int> elevations;
+
+    void createIndicesVector()
+    {
+        indices3D.clear();
+
+        for (int j = 0; j < vertSideNum - 1; j++)
+        {
+            for (int i = 0; i < vertSideNum - 1; i++)
+            {
+                unsigned int rowOffset = j * vertSideNum;
+
+                indices3D.push_back(i + rowOffset);
+                indices3D.push_back(i + 1 + rowOffset);
+                indices3D.push_back(vertSideNum + i + rowOffset); 
+
+                indices3D.push_back(vertSideNum + i + rowOffset);
+                indices3D.push_back(vertSideNum + i + rowOffset + 1);
+                indices3D.push_back(i + rowOffset + 1); 
+            }
+        }
+    }
 
     void create3DVector()
     {
@@ -58,8 +105,8 @@ private:
                 positions3D.push_back(1.0f);
                 positions3D.push_back(0.0f);
 
-                positions3D.push_back(1.0f);
-                positions3D.push_back(1.0f);
+                positions3D.push_back(0.0f);
+                positions3D.push_back(0.0f);
             }
         }
     }

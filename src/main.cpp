@@ -63,17 +63,7 @@ float lightVertices3D[] = {
         -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 };
 
-float newVertices3D[] = {
-    -5.5f,  0.0f, -5.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-     5.5f,  0.0f, -5.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-    -5.5f,  0.0f,  5.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-    -5.5f,  0.0f,  5.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-     5.5f,  0.0f, -5.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-     5.5f,  0.0f,  5.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f
-};
-
 float vertices3D[] = {
-        // WALL 1
         -5.5f,  0.0f, -5.5f, 0.0f, 1.0f,  0.0f, 0.0f, 0.0f,
          5.5f,  0.0f, -5.5f, 0.0f, 1.0f,  0.0f, 1.0f, 0.0f,
          5.5f,  0.0f, -5.5f, 0.0f, 1.0f,  0.0f, 1.0f, 1.0f,
@@ -115,11 +105,6 @@ float vertices3D[] = {
          5.5f,  0.0f,  5.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
         -5.5f,  0.0f,  5.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
         -5.5f,  0.0f, -5.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f
-};
-
-unsigned int indices[] = {
-    0, 2, 3,
-    0, 2, 1
 };
 
 Camera cam(glm::vec3(0.0f, 0.0f, 10.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, 0.0f);
@@ -183,9 +168,6 @@ int main()
 
     glViewport(0, 0, 800, 800);
 
-    GeoData geoData;
-    geoData.readElevation("res/loc.txt");
-
     Shader triangleShader("res/shaders/vertex.shader", "res/shaders/fragment.shader");
     Shader lightSourceShader("res/shaders/lightvertex.shader", "res/shaders/lightfragment.shader");
 
@@ -195,9 +177,26 @@ int main()
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
+    float newVertices3D[] = {
+        -5.5f,  0.0f, -5.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+        5.5f,  0.0f, -5.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+        -5.5f,  0.0f,  5.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+        -5.5f,  0.0f,  5.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+        5.5f,  0.0f, -5.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+        5.5f,  0.0f,  5.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f
+    };
+
     VertexArray box;
     box.bind();
-    box.createVBO(geoData.vecArr3D(), sizeof(geoData.vecArr3D()));
+
+    GeoData geoData("res/loc.txt");
+
+    unsigned int dataSize = geoData.sizeOfVecArr3D();
+    float datas[geoData.sizeOfVecArr3D() / sizeof(float)];
+    geoData.fillVecArr3D(datas);
+
+    box.createVBO(datas, dataSize);
+
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
@@ -206,6 +205,12 @@ int main()
 
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
+
+    unsigned int dataIndicesSize = geoData.sizeOfIndices3D();
+    unsigned int dataIndices[geoData.sizeOfIndices3D() / sizeof(unsigned int)];
+    geoData.fillDataIndices(dataIndices);
+
+    box.createEBO(dataIndices, dataIndicesSize);
 
     triangleShader.use();
     triangleShader.setVec3("objectColor", glm::vec3(1.0f, 1.0f, 1.0f));
@@ -263,7 +268,8 @@ int main()
         triangleShader.setVec3("lightPos", glm::vec3(cos(glfwGetTime()) * 10, sin(glfwGetTime()) * 5, 0.0f));
         triangleShader.setVec3("viewPos", cam.Position);
 
-        glDrawArrays(GL_TRIANGLES, 0, 10000);
+        // glDrawArrays(GL_TRIANGLES, 0, 10000);
+        glDrawElements(GL_TRIANGLES, dataIndicesSize / sizeof(float), GL_UNSIGNED_INT, 0);
         
         glBindVertexArray(light.ID);
         lightSourceShader.use();

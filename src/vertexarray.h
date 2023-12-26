@@ -27,6 +27,14 @@ class VertexArray
 
             return vbo;
         }
+
+        unsigned int createEBO(unsigned int *vert, unsigned int vertSize)
+        {
+            unsigned int ebo;
+            glGenBuffers(1, &ebo);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, vertSize, vert, GL_STATIC_DRAW);
+        }
 };
 
 #endif
