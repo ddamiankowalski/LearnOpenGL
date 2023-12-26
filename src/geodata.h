@@ -10,6 +10,7 @@ public:
     unsigned int vertSideNum = 100;
     
     std::vector<float> xPositions;
+    std::vector<float> yPositions;
     std::vector<float> zPositions;
 
     std::vector<float> positions3D;
@@ -27,8 +28,10 @@ public:
                 elevations.push_back(std::stoi(el));
         }
 
+        normalizeElevation();
         createIndicesVector();
         createXVector();
+        createYVector();
         createZVector();
         create3DVector();
     }
@@ -63,6 +66,30 @@ public:
 
 private:
     std::vector<int> elevations;
+    std::vector<float> normalizedElevations;
+    
+    int elevationMin =  1000;
+    int elevationMax = -1000;
+
+    void normalizeElevation()
+    {
+        normalizedElevations.clear();
+
+        for(int elevation : elevations)
+        {
+            if(elevation > elevationMax)
+                elevationMax = elevation;
+
+            if(elevation < elevationMin)
+                elevationMin = elevation;
+        }
+
+        for(int elevation : elevations)
+        {
+            float normalized = (elevation - elevationMin) * 1.0f / (elevationMax - elevationMin);
+            normalizedElevations.push_back(normalized);
+        }
+    }
 
     void createIndicesVector()
     {
@@ -96,9 +123,10 @@ private:
             for (int j = 0; j < vertSideNum; j++)
             {
                 float xPos = xPositions.at(j);
+                float yPos = yPositions.at(i * vertSideNum + j);
                 
                 positions3D.push_back(xPos);
-                positions3D.push_back(0.0f);
+                positions3D.push_back(yPos);
                 positions3D.push_back(zPos);
 
                 positions3D.push_back(0.0f);
@@ -118,6 +146,14 @@ private:
         
         for (int i = 0; i < vertSideNum; i++)
             xPositions.push_back(-5.0f + delta * i);
+    }
+
+    void createYVector()
+    {
+        yPositions.clear();
+
+        for (float normalized : normalizedElevations)
+            yPositions.push_back(normalized);
     }
 
     void createZVector()
