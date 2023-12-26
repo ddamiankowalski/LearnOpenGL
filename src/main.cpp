@@ -63,50 +63,6 @@ float lightVertices3D[] = {
         -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 };
 
-float vertices3D[] = {
-        -5.5f,  0.0f, -5.5f, 0.0f, 1.0f,  0.0f, 0.0f, 0.0f,
-         5.5f,  0.0f, -5.5f, 0.0f, 1.0f,  0.0f, 1.0f, 0.0f,
-         5.5f,  0.0f, -5.5f, 0.0f, 1.0f,  0.0f, 1.0f, 1.0f,
-         5.5f,  0.0f, -5.5f, 0.0f, 1.0f,  0.0f, 1.0f, 1.0f,
-        -5.5f,  0.0f, -5.5f, 0.0f, 1.0f,  0.0f, 0.0f, 1.0f,
-        -5.5f,  0.0f, -5.5f, 0.0f, 1.0f,  0.0f, 0.0f, 0.0f,
-
-        -5.5f, -0.0f,  5.5f, 0.0f, 1.0f,  0.0f, 0.0f, 0.0f,
-         5.5f, -0.0f,  5.5f, 0.0f, 1.0f,  0.0f, 1.0f, 0.0f,
-         5.5f,  0.0f,  5.5f, 0.0f, 1.0f,  0.0f, 1.0f, 1.0f,
-         5.5f,  0.0f,  5.5f, 0.0f, 1.0f,  0.0f, 1.0f, 1.0f,
-        -5.5f,  0.0f,  5.5f, 0.0f, 1.0f,  0.0f, 0.0f, 1.0f,
-        -5.5f, -0.0f,  5.5f, 0.0f, 1.0f,  0.0f, 0.0f, 0.0f,
-
-        -5.5f,  0.0f,  5.5f, 0.0f, 1.0f,  0.0f, 1.0f, 0.0f,
-        -5.5f,  0.0f, -5.5f, 0.0f, 1.0f,  0.0f, 1.0f, 1.0f,
-        -5.5f, -0.0f, -5.5f, 0.0f, 1.0f,  0.0f, 0.0f, 1.0f,
-        -5.5f, -0.0f, -5.5f, 0.0f, 1.0f,  0.0f, 0.0f, 1.0f,
-        -5.5f, -0.0f,  5.5f, 0.0f, 1.0f,  0.0f, 0.0f, 0.0f,
-        -5.5f,  0.0f,  5.5f, 0.0f, 1.0f,  0.0f, 1.0f, 0.0f,
-
-         5.5f,  0.0f,  5.5f, 0.0f, 1.0f,  0.0f, 1.0f, 0.0f,
-         5.5f,  0.0f, -5.5f, 0.0f, 1.0f,  0.0f, 1.0f, 1.0f,
-         5.5f, -0.0f, -5.5f, 0.0f, 1.0f,  0.0f, 0.0f, 1.0f,
-         5.5f, -0.0f, -5.5f, 0.0f, 1.0f,  0.0f, 0.0f, 1.0f,
-         5.5f, -0.0f,  5.5f, 0.0f, 1.0f,  0.0f, 0.0f, 0.0f,
-         5.5f,  0.0f,  5.5f, 0.0f, 1.0f,  0.0f, 1.0f, 0.0f,
-
-        -5.5f, -0.0f, -5.5f, 0.0f, 1.0f,  0.0f, 0.0f, 1.0f,
-         5.5f, -0.0f, -5.5f, 0.0f, 1.0f,  0.0f, 1.0f, 1.0f,
-         5.5f, -0.0f,  5.5f, 0.0f, 1.0f,  0.0f, 1.0f, 0.0f,
-         5.5f, -0.0f,  5.5f, 0.0f, 1.0f,  0.0f, 1.0f, 0.0f,
-        -5.5f, -0.0f,  5.5f, 0.0f, 1.0f,  0.0f, 0.0f, 0.0f,
-        -5.5f, -0.0f, -5.5f, 0.0f, 1.0f,  0.0f, 0.0f, 1.0f,
-
-        -5.5f,  0.0f, -5.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-         5.5f,  0.0f, -5.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-         5.5f,  0.0f,  5.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-         5.5f,  0.0f,  5.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-        -5.5f,  0.0f,  5.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-        -5.5f,  0.0f, -5.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f
-};
-
 Camera cam(glm::vec3(0.0f, 0.0f, 10.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, 0.0f);
 
 void windowResizeCallback(GLFWwindow* window, int width, int height)
@@ -177,15 +133,6 @@ int main()
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    float newVertices3D[] = {
-        -5.5f,  0.0f, -5.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-        5.5f,  0.0f, -5.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-        -5.5f,  0.0f,  5.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-        -5.5f,  0.0f,  5.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-        5.5f,  0.0f, -5.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-        5.5f,  0.0f,  5.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f
-    };
-
     VertexArray box;
     box.bind();
 
@@ -216,7 +163,6 @@ int main()
     triangleShader.setVec3("objectColor", glm::vec3(1.0f, 1.0f, 1.0f));
     triangleShader.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
 
-    // TEXTURES    
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -268,7 +214,6 @@ int main()
         triangleShader.setVec3("lightPos", glm::vec3(cos(glfwGetTime()) * 10, sin(glfwGetTime()) * 5, 0.0f));
         triangleShader.setVec3("viewPos", cam.Position);
 
-        // glDrawArrays(GL_TRIANGLES, 0, 10000);
         glDrawElements(GL_TRIANGLES, dataIndicesSize / sizeof(float), GL_UNSIGNED_INT, 0);
         
         glBindVertexArray(light.ID);

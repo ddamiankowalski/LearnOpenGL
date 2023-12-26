@@ -12,6 +12,9 @@ public:
     std::vector<float> xPositions;
     std::vector<float> yPositions;
     std::vector<float> zPositions;
+    
+    std::vector<float> xTexPosition;
+    std::vector<float> yTexPosition;
 
     std::vector<float> positions3D;
     std::vector<unsigned int> indices3D;
@@ -33,6 +36,7 @@ public:
         createXVector();
         createYVector();
         createZVector();
+        createTexVector();
         create3DVector();
     }
 
@@ -86,7 +90,7 @@ private:
 
         for(int elevation : elevations)
         {
-            float normalized = (elevation - elevationMin) * 1.0f / (elevationMax - elevationMin);
+            float normalized = (elevation - elevationMin) * 2.0f / (elevationMax - elevationMin);
             normalizedElevations.push_back(normalized);
         }
     }
@@ -124,6 +128,9 @@ private:
             {
                 float xPos = xPositions.at(j);
                 float yPos = yPositions.at(i * vertSideNum + j);
+
+                float xTexPos = xTexPosition.at(j);
+                float yTexPos = yTexPosition.at(i);
                 
                 positions3D.push_back(xPos);
                 positions3D.push_back(yPos);
@@ -133,8 +140,8 @@ private:
                 positions3D.push_back(1.0f);
                 positions3D.push_back(0.0f);
 
-                positions3D.push_back(0.0f);
-                positions3D.push_back(0.0f);
+                positions3D.push_back(xTexPos);
+                positions3D.push_back(yTexPos);
             }
         }
     }
@@ -163,6 +170,20 @@ private:
 
         for (int i = 0; i < vertSideNum; i++)
             zPositions.push_back(-5.0f + delta * i);
+    }
+
+    void createTexVector()
+    {
+        xTexPosition.clear();
+        yTexPosition.clear();
+
+        float delta = 1.0f / (vertSideNum - 1);
+
+        for(int i = 0; i < vertSideNum; i++)
+            xTexPosition.push_back(0.0f + delta * i);
+        
+        for(int i = 0; i < vertSideNum; i++)
+            yTexPosition.push_back(0.0f + delta * i);
     }
 };
 
