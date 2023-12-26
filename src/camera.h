@@ -30,7 +30,7 @@ class Camera
         {
             Position = position;
 
-            Radius = 10.0f;
+            Radius = 15.0f;
             YawAngle = 0.0f;
             PitchAngle = 0.0f;
 

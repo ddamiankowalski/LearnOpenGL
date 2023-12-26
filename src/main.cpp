@@ -176,9 +176,15 @@ int main()
     Shader triangleShader("res/shaders/vertex.shader", "res/shaders/fragment.shader");
     Shader lightSourceShader("res/shaders/lightvertex.shader", "res/shaders/lightfragment.shader");
 
+    VertexArray light;
+    light.bind();
+    light.createVBO(lightVertices3D, sizeof(lightVertices3D));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
     VertexArray box;
     box.bind();
-    unsigned int vbo = box.createVBO(vertices3D, sizeof(vertices3D));
+    box.createVBO(vertices3D, sizeof(vertices3D));
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
@@ -191,14 +197,6 @@ int main()
     triangleShader.use();
     triangleShader.setVec3("objectColor", glm::vec3(1.0f, 1.0f, 1.0f));
     triangleShader.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
-
-    VertexArray light;
-    light.bind();
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    box.bind();
 
     // TEXTURES    
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -232,9 +230,11 @@ int main()
     while(!glfwWindowShouldClose(window))
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClearColor(0.1f, 0.1f, 0.4f, 1.0f); 
 
         processInput(window);
 
+        box.bind();
         triangleShader.use();
         glUniform1i(glGetUniformLocation(triangleShader.ID, "ourTexture"), 0);
 
@@ -247,16 +247,17 @@ int main()
         triangleShader.setMat4("view", view);
         triangleShader.setMat4("projection", projection);
         triangleShader.setMat4("model", model);
-        triangleShader.setVec3("lightPos", glm::vec3(2.0f, 1.65f, 2.0f));
+        triangleShader.setVec3("lightPos", glm::vec3(cos(glfwGetTime()) * 10, sin(glfwGetTime()) * 5, 0.0f));
         triangleShader.setVec3("viewPos", cam.Position);
 
         glDrawArrays(GL_TRIANGLES, 0, 36);
-
+        
+        glBindVertexArray(light.ID);
         lightSourceShader.use();
 
         glm::mat4 model2 = glm::mat4(1.0f); 
-        model2 = glm::translate(model2, glm::vec3(2.0f, 1.65f, 2.0f));
-        model2 = glm::scale(model2, glm::vec3(0.2f));
+        model2 = glm::translate(model2, glm::vec3(cos(glfwGetTime()) * 10, sin(glfwGetTime()) * 5, 0.0f));
+        model2 = glm::scale(model2, glm::vec3(0.4f));
 
         lightSourceShader.setMat4("view", view);
         lightSourceShader.setMat4("projection", projection);
