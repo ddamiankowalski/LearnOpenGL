@@ -197,7 +197,7 @@ int main()
 
     VertexArray box;
     box.bind();
-    box.createVBO(newVertices3D, sizeof(newVertices3D));
+    box.createVBO(geoData.vecArr3D(), sizeof(geoData.vecArr3D()));
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
@@ -263,7 +263,7 @@ int main()
         triangleShader.setVec3("lightPos", glm::vec3(cos(glfwGetTime()) * 10, sin(glfwGetTime()) * 5, 0.0f));
         triangleShader.setVec3("viewPos", cam.Position);
 
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glDrawArrays(GL_TRIANGLES, 0, 10000);
         
         glBindVertexArray(light.ID);
         lightSourceShader.use();
