@@ -68,8 +68,8 @@ class Camera
             if(PitchAngle > 1)
                 PitchAngle = 1;
 
-            if(PitchAngle < 0)
-                PitchAngle = 0;
+            if(PitchAngle < 0.25)
+                PitchAngle = 0.25;
         }
 };
 
