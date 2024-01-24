@@ -34,6 +34,7 @@ class VertexArray
             glGenBuffers(1, &ebo);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, vertSize, vert, GL_STATIC_DRAW);
+            return ebo;
         }
 };
 

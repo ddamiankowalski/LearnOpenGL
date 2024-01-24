@@ -63,7 +63,7 @@ float lightVertices3D[] = {
         -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 };
 
-Camera cam(glm::vec3(0.0f, 0.0f, 10.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, 0.0f);
+Camera cam(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, 0.0f);
 
 void windowResizeCallback(GLFWwindow* window, int width, int height)
 {
@@ -86,6 +86,24 @@ void processInput(GLFWwindow* window)
 
     if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
         cam.ProcessKeyboard(Camera_Movement::LEFT);
+
+    if(glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS)
+        cam.ProcessKeyboard(Camera_Movement::C_LEFT);
+        
+    if(glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
+        cam.ProcessKeyboard(Camera_Movement::C_RIGHT);
+
+    if(glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS)
+        cam.ProcessKeyboard(Camera_Movement::C_FORWARD);
+
+    if(glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS)
+        cam.ProcessKeyboard(Camera_Movement::C_BACKWARD);
+
+    if(glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+        cam.ProcessKeyboard(Camera_Movement::Z_IN);
+
+    if(glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+        cam.ProcessKeyboard(Camera_Movement::Z_OUT);
 }
 
 void static InitializeGlfw()
@@ -203,7 +221,7 @@ int main()
         glUniform1i(glGetUniformLocation(triangleShader.ID, "ourTexture"), 0);
 
         glm::mat4 view;        
-        view = glm::lookAt(cam.Position, glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
+        view = glm::lookAt(cam.Position + cam.Center, cam.Center, glm::vec3(0.0, 1.0, 0.0));
 
         glm::mat4 model = glm::mat4(1.0f); 
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
@@ -211,7 +229,7 @@ int main()
         triangleShader.setMat4("view", view);
         triangleShader.setMat4("projection", projection);
         triangleShader.setMat4("model", model);
-        triangleShader.setVec3("lightPos", glm::vec3(cos(glfwGetTime()) * 10, sin(glfwGetTime()) * 5, 0.0f));
+        triangleShader.setVec3("lightPos", glm::vec3(cos(90) * 10, sin(90) * 5, 0.0f));
         triangleShader.setVec3("viewPos", cam.Position);
 
         glDrawElements(GL_TRIANGLES, dataIndicesSize / sizeof(float), GL_UNSIGNED_INT, 0);

@@ -14,13 +14,20 @@ enum Camera_Movement {
     FORWARD,
     BACKWARD,
     LEFT,
-    RIGHT
+    RIGHT,
+    C_RIGHT,
+    C_LEFT,
+    C_FORWARD,
+    C_BACKWARD,
+    Z_IN,
+    Z_OUT
 };
 
 class Camera
 {
     public:
         glm::vec3 Position;
+        glm::vec3 Center;
 
         float Radius; 
         float YawAngle;
@@ -28,9 +35,10 @@ class Camera
         
         Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH)
         {
-            Position = position;
+            Position = glm::vec3(0.0f, 10.0f, 10.0f);
+            Center = glm::vec3(0.0f, 0.0f, 0.0f);
 
-            Radius = 12.0f;
+            Radius = 10.0f;
             YawAngle = 0.0f;
             PitchAngle = 0.0f;
 
@@ -39,6 +47,9 @@ class Camera
 
         void ProcessKeyboard(Camera_Movement direction)
         {
+            glm::vec3 centerXPos = glm::vec3(0.0f, 0.0f, 0.0f);
+            glm::vec3 centerZPos = glm::vec3(0.0f, 0.0f, 0.0f);
+
             switch(direction) {
                 case FORWARD:
                     PitchAngle += ROTATE_SPEED;
@@ -51,6 +62,25 @@ class Camera
                     break;
                 case RIGHT:
                     YawAngle += ROTATE_SPEED;
+                    break;
+                case C_LEFT:
+                    centerXPos = glm::vec3(0.0f, 0.0f, 0.125f);
+                    break;
+                case C_RIGHT:
+                    centerXPos = glm::vec3(0.0f, 0.0f, -0.125f);
+                    break;
+                case C_BACKWARD:
+                    centerZPos = glm::vec3(0.125f, 0.0f, 0.0f);
+                    break;
+                case C_FORWARD:
+                    centerZPos = glm::vec3(-0.125f, 0.0f, 0.0f);
+                    break;
+                case Z_IN:
+                    Radius -= 0.125f;
+                    break;
+                case Z_OUT:
+                    Radius += 0.125f;
+                    break;
             }
 
             findPitchMinMax();
@@ -60,6 +90,8 @@ class Camera
             float y = Radius * sin(PitchAngle);
 
             Position = glm::vec3(x, y, z);
+
+            Center = Center + centerXPos + centerZPos;
         }
 
     private:
