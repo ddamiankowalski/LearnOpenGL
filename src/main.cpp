@@ -229,7 +229,7 @@ int main()
         triangleShader.setMat4("view", view);
         triangleShader.setMat4("projection", projection);
         triangleShader.setMat4("model", model);
-        triangleShader.setVec3("lightPos", glm::vec3(cos(90) * 10, sin(90) * 5, 0.0f));
+        triangleShader.setVec3("lightPos", glm::vec3(cos(glfwGetTime() / 20) * 30, sin(glfwGetTime() / 20) * 15, 0.0f));
         triangleShader.setVec3("viewPos", cam.Position);
 
         glDrawElements(GL_TRIANGLES, dataIndicesSize / sizeof(float), GL_UNSIGNED_INT, 0);
@@ -238,8 +238,8 @@ int main()
         lightSourceShader.use();
 
         glm::mat4 model2 = glm::mat4(1.0f); 
-        model2 = glm::translate(model2, glm::vec3(cos(glfwGetTime()) * 10, sin(glfwGetTime()) * 5, 0.0f));
-        model2 = glm::scale(model2, glm::vec3(0.4f));
+        model2 = glm::translate(model2, glm::vec3(cos(glfwGetTime() / 20) * 30, sin(glfwGetTime() / 20) * 15, 0.0f));
+        model2 = glm::scale(model2, glm::vec3(1.0f));
 
         lightSourceShader.setMat4("view", view);
         lightSourceShader.setMat4("projection", projection);

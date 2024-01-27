@@ -90,7 +90,7 @@ private:
 
         for(int elevation : elevations)
         {
-            float normalized = (elevation - elevationMin) * 2.0f / (elevationMax - elevationMin);
+            float normalized = (elevation - elevationMin) * 1.0f / (elevationMax - elevationMin);
             normalizedElevations.push_back(normalized);
         }
     }
@@ -149,7 +149,7 @@ private:
     void createXVector()
     {
         xPositions.clear();
-        float delta = 10.0f / (vertSideNum - 1);
+        float delta = 30.0f / (vertSideNum - 1);
         
         for (int i = 0; i < vertSideNum; i++)
             xPositions.push_back(-5.0f + delta * i);
@@ -166,7 +166,7 @@ private:
     void createZVector()
     {
         zPositions.clear();
-        float delta = 10.0f / (vertSideNum - 1);
+        float delta = 30.0f / (vertSideNum - 1);
 
         for (int i = 0; i < vertSideNum; i++)
             zPositions.push_back(-5.0f + delta * i);
